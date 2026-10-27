@@ -1,0 +1,102 @@
+/* Mbono Careers – landing page and hero. Change the brand colours here. */
+:root{
+  --brand:#0f3d68; --brand-2:#1b4f82; --accent:#c85a0a; --on-accent:#fff;
+  --bg:#f5f7fa; --card:#fff; --ink:#1a2433; --mut:#5d6b7e; --line:#dde3ec; --soft:#e8eef6;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#0a2744; --brand-2:#12375d; --accent:#f59a42; --on-accent:#1a1204;
+  --bg:#0d1522; --card:#16212f; --ink:#eef2f8; --mut:#a3b0c4; --line:#27364b; --soft:#22324a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --brand:#0a2744; --brand-2:#12375d; --accent:#f59a42; --on-accent:#1a1204;
+  --bg:#0d1522; --card:#16212f; --ink:#eef2f8; --mut:#a3b0c4; --line:#27364b; --soft:#22324a; color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{margin:0 0 .6rem;font-weight:700;letter-spacing:-.015em;line-height:1.15}
+p{margin:0 0 1rem}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 1.2rem}
+
+/* buttons */
+.btn{display:inline-block;border-radius:8px;padding:.8rem 1.5rem;font-weight:600;text-decoration:none;border:1px solid transparent;transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-1px);opacity:.92}
+.btn.sm{padding:.5rem 1rem;font-size:.9rem}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{border-color:rgba(255,255,255,.45);color:#fff}
+.btn.ghost.light{border-color:rgba(255,255,255,.5)}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.site{background:var(--brand);color:#fff;position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px)}
+.bar{display:flex;align-items:center;gap:1.2rem;min-height:64px}
+.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:#fff}
+.mark{width:38px;height:38px;border-radius:10px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:800;font-size:1.15rem}
+.brand>span:last-child{display:flex;flex-direction:column;font-weight:700;line-height:1.1}
+.brand small{font-weight:500;font-size:.68rem;letter-spacing:.05em;opacity:.85}
+.site nav{display:flex;gap:1.1rem;flex:1;justify-content:center;flex-wrap:wrap}
+.site nav a{color:#d3deef;text-decoration:none;font-size:.92rem}
+.site nav a:hover{color:#fff}
+.actions{display:flex;gap:.5rem;margin-left:auto}
+
+/* hero */
+.hero{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2.5rem;align-items:center;padding-top:4.5rem;padding-bottom:4.5rem}
+.eyebrow{display:inline-block;background:rgba(255,255,255,.14);border-radius:999px;padding:.25rem .85rem;font-size:.8rem;font-weight:600;margin-bottom:1rem}
+.hero h1{font-size:clamp(2.1rem,5vw,3.4rem)}
+.hero h1 span{color:#ffb878}
+.lead{font-size:1.1rem;color:#d8e3f3;max-width:34rem;margin:1rem 0 1.6rem}
+.cta-row{display:flex;flex-wrap:wrap;gap:.7rem}
+.trust{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;padding:0;margin:1.8rem 0 0;color:#c4d3ea;font-size:.88rem}
+.trust li::before{content:"✓";color:#ffb878;margin-right:.4rem}
+
+/* hero visual (pure CSS cards) */
+.hero-art{position:relative;min-height:340px}
+.float{position:absolute;background:var(--card);color:var(--ink);border-radius:14px;padding:1rem 1.2rem;box-shadow:0 18px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:.2rem;animation:bob 6s ease-in-out infinite}
+.float small{color:var(--mut);font-size:.8rem}
+.float strong{font-size:1.05rem}
+.float .big{font-size:2rem;color:var(--accent)}
+.c1{top:0;left:6%;width:72%}
+.c2{top:38%;right:0;width:68%;animation-delay:-2s}
+.c3{bottom:0;left:0;width:52%;animation-delay:-4s}
+.tag{align-self:flex-start;background:var(--soft);color:var(--ink);border-radius:999px;padding:.1rem .65rem;font-size:.75rem;font-weight:600}
+.pill{align-self:flex-start;background:var(--accent);color:var(--on-accent);border-radius:999px;padding:.1rem .7rem;font-size:.78rem;font-weight:600}
+.meter{height:8px;background:var(--soft);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (prefers-reduced-motion:reduce){.float{animation:none}html{scroll-behavior:auto}}
+
+/* sections */
+.section{padding:4rem 0}
+.section.alt{background:var(--soft)}
+.section h2{font-size:clamp(1.6rem,3vw,2.2rem)}
+.sub{color:var(--mut);max-width:40rem;margin-bottom:2rem}
+.steps,.cards{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.steps article,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.4rem;text-decoration:none}
+.steps b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);margin-bottom:.8rem}
+.steps h3,.card h3{font-size:1.1rem}
+.steps p,.card p{color:var(--mut);margin:0;font-size:.95rem}
+.card{transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.card b{color:var(--accent);font-size:.9rem}
+
+/* employer band */
+.band{background:var(--brand);color:#fff;border-radius:18px;padding:2.2rem;display:flex;flex-wrap:wrap;gap:1.4rem;align-items:center;justify-content:space-between}
+.band p{margin:0;color:#d3deef}
+
+/* footer */
+.site-foot{background:var(--brand);color:#c9d4e8;padding:2.4rem 0 1.2rem;margin-top:1rem}
+.fg{display:grid;gap:1.6rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.site-foot h4{color:#fff;margin:0 0 .6rem}
+.site-foot a{display:block;color:#c9d4e8;text-decoration:none;margin:.25rem 0;font-size:.92rem}
+.site-foot a:hover{color:#fff}
+.site-foot p{font-size:.92rem}
+.legal{margin-top:1.6rem;font-size:.82rem;opacity:.75}
+
+/* responsive */
+@media (max-width:900px){
+  .site nav{display:none}
+  .hero-grid{grid-template-columns:1fr;padding-top:3rem;padding-bottom:3rem}
+  .hero-art{min-height:300px}
+}
+@media (max-width:480px){.brand small{display:none}.actions .ghost{display:none}}

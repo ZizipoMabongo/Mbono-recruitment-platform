@@ -1,0 +1,331 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Zanele Dlamini",
+      "email": "candidate@mbono.demo",
+      "role": "Candidate",
+      "pw": "$2b$08$1xaXcdQ.cmj8AloldEpT0.rCzKtSkr8/YJ6x85RkV3BsZHVBMEtq6",
+      "loc": "Gqeberha",
+      "skills": "Communication, Customer service, Computer literacy",
+      "saved": []
+    },
+    {
+      "id": 2,
+      "name": "Sam Recruiter",
+      "email": "recruiter@mbono.demo",
+      "role": "Recruiter",
+      "pw": "$2b$08$1xaXcdQ.cmj8AloldEpT0.rCzKtSkr8/YJ6x85RkV3BsZHVBMEtq6",
+      "loc": "",
+      "skills": "",
+      "saved": []
+    },
+    {
+      "id": 3,
+      "name": "Nomsa Manager",
+      "email": "manager@mbono.demo",
+      "role": "Hiring Manager",
+      "pw": "$2b$08$1xaXcdQ.cmj8AloldEpT0.rCzKtSkr8/YJ6x85RkV3BsZHVBMEtq6",
+      "loc": "",
+      "skills": "",
+      "saved": []
+    },
+    {
+      "id": 4,
+      "name": "Admin User",
+      "email": "admin@mbono.demo",
+      "role": "Admin",
+      "pw": "$2b$10$kNUuoIS2eAT0PW/dV0s7VOKsZs1oQZmnGsSb8mgqzaHh2fELkAnhO",
+      "loc": "",
+      "skills": "",
+      "saved": []
+    },
+    {
+      "id": 5,
+      "name": "Phatheka Mbuthuma",
+      "email": "candidate@example.com",
+      "role": "Candidate",
+      "pw": "$2b$10$/nOfsEyrFIheKsJkWfXJc..9./TVkw/3bpbR.anj8uANbRugGeYKm",
+      "loc": "East London",
+      "skills": "Telephone etiquette, communication, negotiation ",
+      "saved": [],
+      "consentAt": "2026-10-27T09:08:40.512Z",
+      "cv": "RESUME  CV.docx",
+      "cvFile": "5-1793092210823.docx"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Contact Centre Agent",
+      "loc": "Gqeberha",
+      "ind": "BPO & GBS Services",
+      "type": "Full-time",
+      "sal": "R9k–R12k",
+      "skills": [
+        "Communication",
+        "Customer service",
+        "Computer literacy"
+      ],
+      "desc": "Handle inbound customer queries in a high-volume contact centre.",
+      "st": "Open"
+    },
+    {
+      "id": 2,
+      "title": "Data Capturer",
+      "loc": "Gqeberha",
+      "ind": "Professional Services & Admin",
+      "type": "Contract",
+      "sal": "R8k–R11k",
+      "skills": [
+        "Data capturing",
+        "Excel",
+        "Attention to detail"
+      ],
+      "desc": "Accurate data capturing for a shared services client.",
+      "st": "Open"
+    },
+    {
+      "id": 3,
+      "title": "Records Management Clerk",
+      "loc": "Gqeberha",
+      "ind": "Professional Services & Admin",
+      "type": "Full-time",
+      "sal": "R9k–R12k",
+      "skills": [
+        "Records management",
+        "Filing",
+        "MS Office"
+      ],
+      "desc": "Maintain and organise physical and digital records.",
+      "st": "Open"
+    },
+    {
+      "id": 4,
+      "title": "Warehouse Support Assistant",
+      "loc": "Gqeberha",
+      "ind": "Industrial & Manufacturing",
+      "type": "Contract",
+      "sal": "R7k–R9k",
+      "skills": [
+        "Packing",
+        "Teamwork",
+        "Stock handling"
+      ],
+      "desc": "Packing, processing and warehouse support.",
+      "st": "Open"
+    },
+    {
+      "id": 5,
+      "title": "Work Readiness Learner",
+      "loc": "Gqeberha",
+      "ind": "Learnerships & Work Readiness",
+      "type": "Learnership",
+      "sal": "Monthly stipend",
+      "skills": [
+        "Digital literacy",
+        "Communication",
+        "Willingness to learn"
+      ],
+      "desc": "SETA-aligned learnership with workplace practice.",
+      "st": "Open"
+    },
+    {
+      "id": 6,
+      "title": "BPO Team Leader",
+      "loc": "Gqeberha",
+      "ind": "BPO & GBS Services",
+      "type": "Full-time",
+      "sal": "R16k–R22k",
+      "skills": [
+        "Leadership",
+        "Coaching",
+        "Reporting"
+      ],
+      "desc": "Lead a contact centre team and drive quality.",
+      "st": "Open"
+    },
+    {
+      "id": 7,
+      "title": "Gardner",
+      "loc": "Gqeberha",
+      "ind": "Agriculture",
+      "type": "Full-time",
+      "sal": "10 000",
+      "skills": [
+        "Landscaping"
+      ],
+      "desc": "Plant trees and plants",
+      "st": "Open"
+    }
+  ],
+  "apps": [
+    {
+      "id": 1,
+      "job": 1,
+      "name": "Thando Mkhize",
+      "email": "thando@example.com",
+      "skills": "Communication, Customer service",
+      "stage": "Screening",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 2,
+      "job": 2,
+      "name": "Lerato Pillay",
+      "email": "lerato@example.com",
+      "skills": "Data capturing, Excel",
+      "stage": "Shortlisted",
+      "notes": [
+        "Accurate and fast."
+      ],
+      "rate": 4,
+      "fb": "Strong test results."
+    },
+    {
+      "id": 3,
+      "job": 1,
+      "name": "Sipho Naidoo",
+      "email": "sipho@example.com",
+      "skills": "Communication, Customer service, Computer literacy",
+      "stage": "Interview",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 4,
+      "job": 3,
+      "name": "Aisha Jacobs",
+      "email": "aisha@example.com",
+      "skills": "Records management, Filing, MS Office",
+      "stage": "Hired",
+      "notes": [],
+      "rate": 5,
+      "fb": "Excellent."
+    },
+    {
+      "id": 5,
+      "job": 4,
+      "name": "Pieter van Wyk",
+      "email": "pieter@example.com",
+      "skills": "Packing, Teamwork",
+      "stage": "Interview",
+      "notes": [],
+      "rate": 0,
+      "fb": "",
+      "interview": {
+        "when": "2026-10-28T09:02:00.000Z",
+        "mode": "Teams",
+        "link": "Teams"
+      }
+    },
+    {
+      "id": 6,
+      "job": 5,
+      "name": "Nandi Dube",
+      "email": "nandi@example.com",
+      "skills": "Digital literacy, Communication",
+      "stage": "Applied",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 7,
+      "job": 1,
+      "name": "Zanele Dlamini",
+      "email": "candidate@mbono.demo",
+      "skills": "Communication, Customer service, Computer literacy",
+      "stage": "Applied",
+      "notes": [],
+      "rate": 0,
+      "fb": "",
+      "cover": "I am applying for the job"
+    }
+  ],
+  "audit": [
+    {
+      "t": "2026/10/27, 05:10:44",
+      "r": "Candidate",
+      "m": "Profile updated"
+    },
+    {
+      "t": "2026/10/27, 05:10:25",
+      "r": "Candidate",
+      "m": "Profile updated"
+    },
+    {
+      "t": "2026/10/27, 05:10:10",
+      "r": "Candidate",
+      "m": "CV uploaded"
+    },
+    {
+      "t": "2026/10/27, 05:09:47",
+      "r": "Candidate",
+      "m": "CV uploaded"
+    },
+    {
+      "t": "2026/10/27, 05:08:40",
+      "r": "Candidate",
+      "m": "Phatheka Mbuthuma registered"
+    },
+    {
+      "t": "2026/10/27, 05:07:46",
+      "r": "Candidate",
+      "m": "Zanele Dlamini signed in"
+    },
+    {
+      "t": "2026/10/27, 05:04:39",
+      "r": "Admin",
+      "m": "Admin User signed in"
+    },
+    {
+      "t": "2026/10/27, 05:04:10",
+      "r": "Hiring Manager",
+      "m": "Vacancy Gardner: Open"
+    },
+    {
+      "t": "2026/10/27, 05:04:09",
+      "r": "Hiring Manager",
+      "m": "Vacancy BPO Team Leader: Open"
+    },
+    {
+      "t": "2026/10/27, 05:03:57",
+      "r": "Hiring Manager",
+      "m": "Nomsa Manager signed in"
+    },
+    {
+      "t": "2026/10/27, 05:03:44",
+      "r": "Recruiter",
+      "m": "Vacancy created: Gardner"
+    },
+    {
+      "t": "2026/10/27, 05:02:29",
+      "r": "Recruiter",
+      "m": "Interview booked for Pieter van Wyk"
+    },
+    {
+      "t": "2026/10/27, 05:01:47",
+      "r": "Recruiter",
+      "m": "Sam Recruiter signed in"
+    },
+    {
+      "t": "2026/10/27, 05:01:36",
+      "r": "Candidate",
+      "m": "Applied for Contact Centre Agent"
+    },
+    {
+      "t": "2026/10/27, 05:01:07",
+      "r": "Candidate",
+      "m": "Zanele Dlamini signed in"
+    },
+    {
+      "t": "2026/10/27, 04:59:40",
+      "r": "Candidate",
+      "m": "Zanele Dlamini signed in"
+    }
+  ]
+}
