@@ -1,0 +1,170 @@
+{
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Contact Centre Agent",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Full-time",
+      "sal": "R9k–R12k",
+      "skills": [
+        "Communication",
+        "Customer service",
+        "Computer literacy"
+      ],
+      "desc": "Handle inbound customer queries in a high-volume contact centre.",
+      "st": "Open",
+      "sector": "BPO & GBS Services"
+    },
+    {
+      "id": 2,
+      "title": "Data Capturer",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Contract",
+      "sal": "R8k–R11k",
+      "skills": [
+        "Data capturing",
+        "Excel",
+        "Attention to detail"
+      ],
+      "desc": "Accurate data capturing for a shared services client.",
+      "st": "Open",
+      "sector": "Professional Services & Admin"
+    },
+    {
+      "id": 3,
+      "title": "Records Management Clerk",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Full-time",
+      "sal": "R9k–R12k",
+      "skills": [
+        "Records management",
+        "Filing",
+        "MS Office"
+      ],
+      "desc": "Maintain and organise physical and digital records.",
+      "st": "Open",
+      "sector": "Professional Services & Admin"
+    },
+    {
+      "id": 4,
+      "title": "Warehouse Support Assistant",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Contract",
+      "sal": "R7k–R9k",
+      "skills": [
+        "Packing",
+        "Teamwork",
+        "Stock handling"
+      ],
+      "desc": "Packing, processing and warehouse support.",
+      "st": "Open",
+      "sector": "Industrial & Manufacturing"
+    },
+    {
+      "id": 5,
+      "title": "Work Readiness Learner",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Learnership",
+      "sal": "Monthly stipend",
+      "skills": [
+        "Digital literacy",
+        "Communication",
+        "Willingness to learn"
+      ],
+      "desc": "SETA-aligned learnership with workplace practice.",
+      "st": "Open",
+      "sector": "Learnerships & Work Readiness"
+    },
+    {
+      "id": 6,
+      "title": "BPO Team Leader",
+      "loc": "Gqeberha",
+      "ind": "Mbono Career Goals",
+      "type": "Full-time",
+      "sal": "R16k–R22k",
+      "skills": [
+        "Leadership",
+        "Coaching",
+        "Reporting"
+      ],
+      "desc": "Lead a contact centre team and drive quality.",
+      "st": "Pending",
+      "sector": "BPO & GBS Services"
+    }
+  ],
+  "apps": [
+    {
+      "id": 1,
+      "job": 1,
+      "name": "Thando Mkhize",
+      "email": "thando@example.com",
+      "skills": "Communication, Customer service",
+      "stage": "Screening",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 2,
+      "job": 2,
+      "name": "Lerato Pillay",
+      "email": "lerato@example.com",
+      "skills": "Data capturing, Excel",
+      "stage": "Shortlisted",
+      "notes": [
+        "Accurate and fast."
+      ],
+      "rate": 4,
+      "fb": "Strong test results."
+    },
+    {
+      "id": 3,
+      "job": 1,
+      "name": "Sipho Naidoo",
+      "email": "sipho@example.com",
+      "skills": "Communication, Customer service, Computer literacy",
+      "stage": "Interview",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 4,
+      "job": 3,
+      "name": "Aisha Jacobs",
+      "email": "aisha@example.com",
+      "skills": "Records management, Filing, MS Office",
+      "stage": "Hired",
+      "notes": [],
+      "rate": 5,
+      "fb": "Excellent."
+    },
+    {
+      "id": 5,
+      "job": 4,
+      "name": "Pieter van Wyk",
+      "email": "pieter@example.com",
+      "skills": "Packing, Teamwork",
+      "stage": "Applied",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    },
+    {
+      "id": 6,
+      "job": 5,
+      "name": "Nandi Dube",
+      "email": "nandi@example.com",
+      "skills": "Digital literacy, Communication",
+      "stage": "Applied",
+      "notes": [],
+      "rate": 0,
+      "fb": ""
+    }
+  ]
+}

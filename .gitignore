@@ -1,0 +1,13 @@
+node_modules
+.env
+data/db.json
+backend/uploads
+backend/data/outbox.log
+
+.env
+.env.local
+backend/data/db.json
+
+.env
+.env.local
+backend/data/db.json
