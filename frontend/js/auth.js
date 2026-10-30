@@ -3,7 +3,7 @@
 const API=location.port=='3000'?'/api':'http://localhost:3000/api';
 const MB_VIDEO=''; // Hero video: after adding a file such as frontend/img/hero/hero.mp4, set this to 'img/hero/hero.mp4' and refresh.
 const MBAuth=(()=>{
- const ROLES=[['Candidate','candidate@mbono.demo'],['Recruiter','recruiter@mbono.demo'],['Hiring Manager','manager@mbono.demo']];
+ const ROLES=[['Candidate','candidate@mbono.demo'],['Recruiter','recruiter@mbono.demo'],['Hiring Manager','manager@mbono.demo'],...(location.hash=='#admin'?[['Administrator','']]:[])];
  let mode='login',tok='',note='';
  const st=document.createElement('style');
  st.textContent=`.mbo{position:fixed;inset:0;z-index:100;background:rgba(8,40,28,.62);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:1rem}

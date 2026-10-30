@@ -86,8 +86,35 @@
     <div class="in">
       <div class="band">
         <img class="wm" src="img/emblem.png" alt="">
-        <div><span class="pill">Impact sourcing</span><h2>Source work-ready talent that fits.</h2><p>Tell us what you need and we will connect you with trained, motivated candidates.</p></div>
-        <div style="display:flex;gap:.7rem;flex-wrap:wrap"><button class="btn em lg" onclick="MBEnquiry.open('employer')">Request talent</button><a class="btn glass lg" href="https://www.mbono.co.za/contact" target="_blank" rel="noopener">Talk to us</a></div>
+        <div>
+          <span class="pill">Impact sourcing</span>
+          <h2>Source work-ready talent that fits.</h2>
+          <p>Tell us what you need and we will connect you with trained, motivated candidates.</p>
+          <ul class="chips">
+            <li>BPO &amp; GBS Services</li><li>Professional Services &amp; Admin</li><li>Industrial &amp; Manufacturing</li><li>Learnerships &amp; Work Readiness</li>
+          </ul>
+          <div style="display:flex;gap:.7rem;flex-wrap:wrap">
+            <button class="btn em lg" onclick="MBEnquiry.open('employer')">Request talent</button>
+            
+          </div>
+          <p class="contact-line">Prefer to talk? <a href="mailto:info@mbono.co.za">info@mbono.co.za</a> · <a href="tel:+27418800086">+27 (0)41 880 0086</a></p>
+        </div>
+
+        <div class="how">
+          <h3>How hiring with Mbono works</h3>
+          <ol>
+            <li><b>1</b><div><strong>Tell us what you need</strong><span>Share the roles, numbers and timing through the request form.</span></div></li>
+            <li><b>2</b><div><strong>We screen and match</strong><span>We shortlist work-ready candidates from our trained talent.</span></div></li>
+            <li><b>3</b><div><strong>You interview and hire</strong><span>Meet your shortlist and choose the people who fit your team.</span></div></li>
+          </ol>
+        </div>
+
+        <div class="why">
+          <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg><p style="margin:0"><strong>Work-ready candidates</strong><span>Trained in the skills your roles need before they reach you.</span></p></div>
+          <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg><p style="margin:0"><strong>Local Eastern Cape talent</strong><span>People from Gqeberha and across the region.</span></p></div>
+          <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg><p style="margin:0"><strong>Learnership-aligned</strong><span>SETA-aligned programmes that combine theory with workplace practice.</span></p></div>
+          <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg><p style="margin:0"><strong>POPIA-compliant process</strong><span>Candidate information handled with care.</span></p></div>
+        </div>
       </div>
     </div>
   </section>
@@ -108,10 +135,11 @@
 
 <script src="js/art.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/enquiry.js"></script>
+<script src="js/enquiry.js"></script><script src="js/chat.js"></script><script src="js/watermark.js"></script>
 <script>
   if (MB_VIDEO) { const v = document.createElement('video'); v.className = 'bgvid'; v.src = MB_VIDEO; v.autoplay = v.loop = v.playsInline = true; v.muted = true; document.querySelector('.hero .slides').appendChild(v); }
   document.querySelectorAll('[data-art]').forEach(e => e.innerHTML = mbArt(+e.dataset.art));
+  if (location.hash == '#admin') MBAuth.open('login');
   const h = location.hash.match(/reset=([a-f0-9]+)/); if (h) location.href = 'app.html' + location.hash;
 </script>
 </body>

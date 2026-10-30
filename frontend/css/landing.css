@@ -8,9 +8,25 @@
 .steps article{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.4rem}
 .steps b{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;margin-bottom:.8rem}
 .steps h3{color:var(--deep)}.steps p{margin:0;color:var(--mut)}
-.band{position:relative;overflow:hidden;background:var(--deep);color:#fff;border-radius:20px;padding:2.4rem;display:flex;flex-wrap:wrap;gap:1.4rem;align-items:center;justify-content:space-between}
-.band h2{color:#fff}.band p{margin:0;color:#cfe3d6;max-width:34rem}.band>*{position:relative;z-index:2}
-.band .wm{z-index:1;opacity:.08;width:320px}
+.band{position:relative;overflow:hidden;background:var(--deep);color:#fff;border-radius:22px;padding:2.6rem;display:grid;grid-template-columns:1.1fr .9fr;gap:2.2rem;align-items:center}
+.band>*{position:relative;z-index:2}
+.band>.wm{position:absolute;z-index:1;opacity:.07;width:420px;right:-90px;top:-70px;animation:none;transform:none}
+.band h2{color:#fff;font-size:clamp(1.8rem,3.4vw,2.6rem);margin:.4rem 0 .6rem}
+.band p{margin:0 0 1.1rem;color:#d3e6da;max-width:34rem}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.4rem;padding:0;list-style:none}
+.chips li{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);border-radius:99px;padding:.3rem .85rem;font-size:.82rem}
+.band .contact-line{margin:1.3rem 0 0;font-size:.9rem;color:#bcd6c6}
+.contact-line a{color:#fff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4)}
+.how{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:1.5rem}
+.how h3{color:var(--mint);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.1rem}
+.how ol{list-style:none;margin:0;padding:0;display:grid;gap:1.1rem}
+.how li{display:grid;grid-template-columns:34px 1fr;gap:.8rem}
+.how li b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--em);color:#05261a}
+.how li strong{display:block}.how li span{color:#cfe3d6;font-size:.9rem}
+.why{grid-column:1/-1;display:grid;gap:1rem 1.4rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));border-top:1px solid rgba(255,255,255,.18);padding-top:1.6rem;margin-top:.4rem}
+.why div{display:flex;gap:.7rem;align-items:flex-start}.why svg{flex:none;color:var(--mint);margin-top:.15rem}
+.why strong{display:block;font-size:.95rem}.why span{font-size:.85rem;color:#cfe3d6}
+@media(max-width:860px){.band{grid-template-columns:1fr;padding:1.8rem}}
 .legal{max-width:1180px;margin:1.4rem auto 0;font-size:.82rem;opacity:.75}
 .foot-brand img{width:56px;border-radius:50%;margin-bottom:.6rem}
 @media(max-width:480px){.brand small{display:none}}

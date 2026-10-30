@@ -1,7 +1,7 @@
 // Mbono Professional Services – recruitment API (beta)
 // Storage is a JSON file (data/db.json) so nothing else needs installing.
 // To move to SQL Server later, replace the load()/save() helpers and the db.* reads.
-require('dotenv').config(); // reads backend/.env if it exists
+require('dotenv').config({ path: [__dirname + '/.env.local', __dirname + '/.env'] }); // reads backend/.env.local and backend/.env
 const express = require('express'), cors = require('cors'), jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs'), fs = require('fs'), path = require('path'), crypto = require('crypto');
 const multer = require('multer'), nodemailer = require('nodemailer'), mammoth = require('mammoth');
@@ -37,10 +37,20 @@ function load() {
   };
 }
 const db = load();
-db.jobs.forEach(j => { if (!j.sector) j.sector = j.ind; j.ind = 'Mbono Career Goals'; }); // one industry: Mbono Career Goals
+{ const adm = db.users.find(u => u.role === 'Admin'); if (adm && process.env.ADMIN_PASSWORD) adm.pw = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10); } // admin password is managed from .env
+// MongoDB (optional): audit trail and versioned consent records. Without MONGODB_URI everything stays in db.json.
+let mongo = null;
+if (process.env.MONGODB_URI) require('mongodb').MongoClient.connect(process.env.MONGODB_URI).then(c => { mongo = c.db(process.env.MONGODB_DB || 'mbono');
+  mongo.collection('audit').createIndex({ at: -1 }); mongo.collection('consents').createIndex({ userId: 1, at: -1 }); console.log('MongoDB connected: audit trail and consent records'); })
+  .catch(e => console.error('MongoDB unavailable, using db.json:', e.message));
+const CONSENT_VERSION = '2026-01';
+const consent = (u, purpose) => { const at = new Date(), r = { userId: u.id, purpose, version: CONSENT_VERSION };
+  (db.consents = db.consents || []).push({ ...r, at: at.toISOString() }); if (mongo) mongo.collection('consents').insertOne({ ...r, at }).catch(() => {}); };
+db.jobs.forEach(j => { if (!j.created) j.created = new Date().toISOString(); if (!j.sector) j.sector = j.ind; j.ind = 'Mbono Career Goals'; }); // one industry: Mbono Career Goals
 const save = () => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
 const nextId = list => list.reduce((m, x) => Math.max(m, x.id), 0) + 1;
-const log = (user, msg) => { db.audit.unshift({ t: new Date().toLocaleString('en-ZA'), r: user.role, m: msg }); db.audit = db.audit.slice(0, 300); };
+const log = (user, msg) => { const e = { t: new Date().toLocaleString('en-ZA'), at: new Date().toISOString(), uid: user.id || null, r: user.role, m: msg };
+  db.audit.unshift(e); db.audit = db.audit.slice(0, 300); if (mongo) mongo.collection('audit').insertOne({ ...e, at: new Date() }).catch(() => {}); };
 const publicUser = u => { const { pw, reset, cvFile, cvText, ...rest } = u; return rest; };
 
 // ---------- middleware ----------
@@ -93,7 +103,7 @@ app.post('/api/jobs', auth('Recruiter', 'Admin'), (req, res) => {
   const b = req.body;
   if (!b.title || !String(b.title).trim()) return res.status(400).json({ error: 'Title is required' });
   const job = { id: nextId(db.jobs), title: b.title.trim(), loc: b.loc || 'Remote', ind: 'Mbono Career Goals', sector: SECTORS.includes(b.sector) ? b.sector : SECTORS[1], type: b.type || 'Full-time',
-    sal: b.sal || 'Negotiable', skills: Array.isArray(b.skills) ? b.skills : [], desc: b.desc || '', st: 'Pending' };
+    sal: b.sal || 'Negotiable', skills: Array.isArray(b.skills) ? b.skills : [], desc: b.desc || '', st: 'Pending', created: new Date().toISOString(), owner: req.user.id };
   db.jobs.push(job); log(req.user, `Vacancy created: ${job.title}`); save(); res.status(201).json(job);
 });
 
@@ -102,13 +112,14 @@ app.patch('/api/jobs/:id', auth(...STAFF), (req, res) => {
   if (!job) return res.status(404).json({ error: 'Vacancy not found' });
   const allowed = req.user.role === 'Recruiter' ? ['Closed'] : ['Open', 'Changes requested', 'Closed'];
   if (!allowed.includes(req.body.st)) return res.status(403).json({ error: `${req.user.role} cannot set status "${req.body.st}"` });
-  job.st = req.body.st; log(req.user, `Vacancy ${job.title}: ${job.st}`); save(); res.json(job);
+  job.st = req.body.st; if (req.body.comment !== undefined) job.comment = String(req.body.comment).slice(0, 1000); if (job.st === 'Open') job.comment = '';
+  log(req.user, `Vacancy ${job.title}: ${job.st}`); save(); res.json(job);
 });
 
 app.post('/api/jobs/:id/duplicate', auth('Recruiter', 'Admin'), (req, res) => {
   const job = db.jobs.find(j => j.id == req.params.id);
   if (!job) return res.status(404).json({ error: 'Vacancy not found' });
-  const copy = { ...job, id: nextId(db.jobs), title: job.title + ' (copy)', st: 'Pending' };
+  const copy = { ...job, id: nextId(db.jobs), title: job.title + ' (copy)', st: 'Pending', created: new Date().toISOString(), owner: req.user.id, comment: '' };
   db.jobs.push(copy); log(req.user, 'Vacancy duplicated'); save(); res.status(201).json(copy);
 });
 
@@ -124,8 +135,9 @@ app.post('/api/applications', auth('Candidate'), (req, res) => {
   if (!req.body.consent) return res.status(400).json({ error: 'POPIA consent is required' });
   if (db.apps.some(a => a.job === job.id && a.email === u.email)) return res.status(409).json({ error: 'You already applied' });
   const a = { id: nextId(db.apps), job: job.id, name: u.name, email: u.email, skills: u.skills, stage: 'Applied',
-    notes: [], rate: 0, fb: '', cover: req.body.coverNote || '' };
-  db.apps.push(a); log(req.user, `Applied for ${job.title}`); save();
+    notes: [], rate: 0, fb: '', cover: req.body.coverNote || '', at: new Date().toISOString(), history: [],
+    source: ['Website', 'Referral', 'Social media', 'Job board', 'Walk-in'].includes(req.body.source) ? req.body.source : 'Website' };
+  db.apps.push(a); consent(u, 'application'); log(req.user, `Applied for ${job.title}`); save();
   mail(u.email, `Application received: ${job.title}`, `Hi ${u.name},\n\nWe received your application for ${job.title}. You can follow its status on your dashboard.\n\nMbono Professional Services`); res.status(201).json(a);
 });
 
@@ -141,7 +153,7 @@ app.patch('/api/applications/:id', auth(...STAFF), (req, res) => {
   const { stage, rate, fb } = req.body;
   if (stage !== undefined) {
     if (!STAGES.includes(stage)) return res.status(400).json({ error: 'Unknown stage' });
-    a.stage = stage; log(req.user, `${a.name} moved to ${stage}`); notifyStage(a, stage);
+    a.stage = stage; (a.history = a.history || []).push({ stage, by: req.user.id, at: new Date().toISOString() }); log(req.user, `${a.name} moved to ${stage}`); notifyStage(a, stage);
   }
   if (rate !== undefined) { a.rate = Math.max(0, Math.min(5, +rate || 0)); log(req.user, `${a.name} rated ${a.rate}`); }
   if (fb !== undefined) { a.fb = String(fb); log(req.user, `Feedback updated for ${a.name}`); }
@@ -196,7 +208,12 @@ app.post('/api/inquiries', (req, res) => {
 
 // ---------- admin ----------
 app.get('/api/users', auth('Admin'), (req, res) => res.json(db.users.map(publicUser)));
-app.get('/api/audit', auth('Admin'), (req, res) => res.json(db.audit));
+app.get('/api/audit', auth('Admin'), async (req, res) => {
+  if (mongo) { try { const rows = await mongo.collection('audit').find({}).sort({ at: -1 }).limit(300).toArray(); return res.json(rows.map(r => ({ t: new Date(r.at).toLocaleString('en-ZA'), r: r.r, m: r.m }))); } catch {} }
+  res.json(db.audit);
+});
+app.get('/api/consents', auth('Admin'), async (req, res) => res.json(mongo ? await mongo.collection('consents').find({}).sort({ at: -1 }).limit(300).toArray() : (db.consents || [])));
+app.get('/api/me/consents', auth(), (req, res) => res.json((db.consents || []).filter(c => c.userId === req.user.id)));
 
 // ---------- email (SMTP if configured, otherwise printed and saved to data/outbox.log) ----------
 const tx = process.env.SMTP_HOST ? nodemailer.createTransport({ host: process.env.SMTP_HOST, port: +process.env.SMTP_PORT || 587,
@@ -225,7 +242,7 @@ app.post('/api/auth/register', (req, res) => {
   if (db.users.some(u => u.email.toLowerCase() === email.toLowerCase())) return res.status(409).json({ error: 'That email is already registered' });
   const u = { id: nextId(db.users), name: name.trim(), email: email.trim(), role: 'Candidate', pw: bcrypt.hashSync(password, 10),
     loc: '', skills: '', saved: [], consentAt: new Date().toISOString() };
-  db.users.push(u); log(u, `${u.name} registered`); save();
+  db.users.push(u); consent(u, 'registration'); consent(u, 'privacy-policy'); log(u, `${u.name} registered`); save();
   mail(u.email, 'Welcome to Mbono Careers', `Hi ${u.name},\n\nYour account is ready. Upload your CV to fill in your skills and start applying.\n\nMbono Professional Services`);
   res.status(201).json(issue(u));
 });
@@ -299,7 +316,7 @@ app.post('/api/applications/:id/interview', auth('Recruiter', 'Admin'), (req, re
   const a = db.apps.find(x => x.id == req.params.id), { when, mode = 'Teams', link = '' } = req.body;
   if (!a) return res.status(404).json({ error: 'Application not found' });
   if (!when || isNaN(new Date(when))) return res.status(400).json({ error: 'Choose a valid date and time' });
-  a.interview = { when, mode, link }; a.stage = 'Interview'; log(req.user, `Interview booked for ${a.name}`); save();
+  a.interview = { when, mode, link }; a.stage = 'Interview'; (a.history = a.history || []).push({ stage: 'Interview', by: req.user.id, at: new Date().toISOString() }); log(req.user, `Interview booked for ${a.name}`); save();
   const when_ = new Date(when).toLocaleString('en-ZA');
   mail(a.email, `Interview invitation: ${jobOf(a).title}`, `Hi ${a.name},\n\nYou are invited to an interview for ${jobOf(a).title}.\nWhen: ${when_}\nHow: ${mode}${link ? '\nLink or venue: ' + link : ''}\n\nA calendar file is attached.\n\nMbono Professional Services`,
     [{ filename: 'interview.ics', content: ics(a, jobOf(a), a.interview), contentType: 'text/calendar' }]);
@@ -318,9 +335,86 @@ app.delete('/api/me', auth('Candidate'), (req, res) => {
   if (u.cvFile) fs.rmSync(path.join(UPLOADS, u.cvFile), { force: true });
   db.apps = db.apps.filter(a => a.email !== u.email);
   db.audit.forEach(x => { x.m = x.m.split(u.name).join('Deleted candidate'); });
+  if (mongo) mongo.collection('audit').updateMany({ m: { $regex: u.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') } }, [{ $set: { m: { $replaceAll: { input: '$m', find: u.name, replacement: 'Deleted candidate' } } } }]).catch(() => {});
   db.users = db.users.filter(x => x.id !== u.id);
   db.audit.unshift({ t: new Date().toLocaleString('en-ZA'), r: 'Candidate', m: 'Candidate account and data deleted (POPIA request)' }); save();
   res.json({ ok: true });
+});
+
+
+// ---------- vacancy editing (recruiter, after the hiring manager asks for changes) ----------
+app.put('/api/jobs/:id', auth('Recruiter', 'Admin'), (req, res) => {
+  const job = db.jobs.find(j => j.id == req.params.id), b = req.body;
+  if (!job) return res.status(404).json({ error: 'Vacancy not found' });
+  if (!['Changes requested', 'Pending'].includes(job.st)) return res.status(403).json({ error: 'Only vacancies awaiting changes or approval can be edited' });
+  if (!String(b.title || '').trim()) return res.status(400).json({ error: 'Title is required' });
+  Object.assign(job, { title: b.title.trim(), loc: b.loc || job.loc, sector: SECTORS.includes(b.sector) ? b.sector : job.sector, type: b.type || job.type, sal: b.sal || job.sal,
+    skills: Array.isArray(b.skills) ? b.skills : job.skills, desc: b.desc ?? job.desc, st: 'Pending', comment: '' });
+  log(req.user, `Vacancy edited and resubmitted: ${job.title}`); save(); res.json(job);
+});
+
+// ---------- reports: vacancy ageing, source of hire, recruiter performance ----------
+app.get('/api/reports', auth('Admin', 'Recruiter'), (req, res) => {
+  const now = Date.now(), source = {};
+  const aging = db.jobs.filter(j => j.st !== 'Closed').map(j => ({ title: j.title, st: j.st, days: Math.floor((now - new Date(j.created || now)) / 864e5), apps: db.apps.filter(a => a.job === j.id).length }));
+  db.apps.forEach(a => { const k = a.source || 'Website'; source[k] = source[k] || { applications: 0, hires: 0 }; source[k].applications++; if (a.stage === 'Hired') source[k].hires++; });
+  const perf = db.users.filter(u => u.role === 'Recruiter').map(u => { const jobs = db.jobs.filter(j => j.owner === u.id), mine = db.apps.filter(a => jobs.some(j => j.id === a.job));
+    return { name: u.name, vacancies: jobs.length, applications: mine.length, moves: db.apps.reduce((n, a) => n + (a.history || []).filter(h => h.by === u.id).length, 0), interviews: mine.filter(a => a.interview).length, hires: mine.filter(a => a.stage === 'Hired').length }; });
+  res.json({ aging, source, perf });
+});
+
+// ---------- assistive tools (rule-based, advisory only; a person decides. Name, gender, age and photo are never used) ----------
+const appOr404 = (req, res) => { const a = db.apps.find(x => x.id == req.params.id); if (!a) res.status(404).json({ error: 'Application not found' }); return a; };
+const kw = a => { const j = jobOf(a), u = userOf(a) || {}, text = ((u.cvText || '') + ' ' + (u.skills || a.skills || '')).toLowerCase(), skills = j.skills || [];
+  const have = skills.filter(s => text.includes(s.toLowerCase())); return { j, u, have, miss: skills.filter(s => !have.includes(s)) }; };
+app.get('/api/applications/:id/screen', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a) return; const { j, u, have, miss } = kw(a), flags = [];
+  if (!u.cvFile) flags.push('No CV on file'); if (!u.education) flags.push('No education or qualifications listed'); if (!u.experience) flags.push('No work experience listed'); if (!u.phone) flags.push('No phone number');
+  res.json({ score: (j.skills || []).length ? Math.round(100 * have.length / j.skills.length) : 0, matched: have, missing: miss, flags });
+});
+app.get('/api/applications/:id/questions', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a) return; const { j, have, miss } = kw(a);
+  res.json({ questions: [`Tell us about yourself and why you applied for ${j.title}.`, ...have.slice(0, 3).map(s => `Describe a time you used ${s}. What was the result?`),
+    ...miss.slice(0, 3).map(s => `This role needs ${s}. Have you used anything similar, and how would you get up to speed?`),
+    'Tell us about a time you handled pressure or a difficult situation at work.', 'What are your availability and salary expectations?'] });
+});
+app.post('/api/applications/:id/scorecard', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a) return; const { j, have } = kw(a);
+  const rows = [...new Set([...(j.skills || []), 'Communication', 'Work readiness', 'Team fit'])].map(c => ({ criterion: c, suggested: (j.skills || []).includes(c) ? (have.includes(c) ? 4 : 2) : null, rating: 0 }));
+  a.scorecard = { at: new Date().toISOString(), rows }; log(req.user, `Scorecard generated for ${a.name}`); save(); res.json(a.scorecard);
+});
+app.put('/api/applications/:id/scorecard', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a || !a.scorecard) return res.status(404).json({ error: 'Generate a scorecard first' });
+  (req.body.rows || []).forEach((r, i) => { if (a.scorecard.rows[i]) a.scorecard.rows[i].rating = Math.max(0, Math.min(5, +r.rating || 0)); });
+  log(req.user, `Scorecard updated for ${a.name}`); save(); res.json(a.scorecard);
+});
+app.post('/api/applications/:id/message', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a) return; const t = jobOf(a).title, hi = `Hi ${a.name},\n\n`, end = '\n\nKind regards,\nMbono Professional Services';
+  const T = { shortlist: [`You have been shortlisted: ${t}`, `${hi}Thank you for applying for ${t}. We are pleased to tell you that you have been shortlisted. We will be in touch about next steps.${end}`],
+    interview: [`Interview invitation: ${t}`, `${hi}We would like to invite you to an interview for ${t}. Please reply with your availability this week and we will confirm a time.${end}`],
+    offer: [`Offer: ${t}`, `${hi}Congratulations. We would like to offer you the position of ${t}. The formal offer details will follow shortly.${end}`],
+    rejection: [`Your application: ${t}`, `${hi}Thank you for your interest in ${t} and for the time you put into applying. We were not able to take your application further this time, and we encourage you to apply for future vacancies.${end}`] }[req.body.kind];
+  if (!T) return res.status(400).json({ error: 'Unknown message type' }); res.json({ subject: T[0], body: T[1] });
+});
+app.post('/api/applications/:id/message/send', auth(...STAFF), (req, res) => {
+  const a = appOr404(req, res); if (!a) return; const sub = String(req.body.subject || '').replace(/[\r\n]+/g, ' ').slice(0, 150), body = String(req.body.body || '').slice(0, 4000);
+  if (!sub || !body) return res.status(400).json({ error: 'Subject and message are required' });
+  mail(a.email, sub, body); log(req.user, `Message sent to ${a.name}`); save(); res.json({ ok: true });
+});
+
+// ---------- chat assistant ----------
+const optUser = req => { try { const p = jwt.verify((req.headers.authorization || '').replace('Bearer ', ''), SECRET); return db.users.find(u => u.id === p.id); } catch { return null; } };
+app.post('/api/chat', (req, res) => {
+  const q = String(req.body.message || '').slice(0, 300).toLowerCase(), u = optUser(req), open = db.jobs.filter(j => j.st === 'Open'); let r;
+  if (/status|my application|applied/.test(q)) {
+    if (!u || u.role !== 'Candidate') r = 'Please sign in as a candidate and I can check your application status.';
+    else { const my = db.apps.filter(a => a.email === u.email); r = my.length ? 'Your applications: ' + my.map(a => `${jobOf(a).title} (${a.stage})`).join('; ') + '.' : 'You have not applied for any vacancies yet.'; }
+  } else if (/\bcv\b|resume|upload/.test(q)) r = 'Upload a PDF or DOCX (max 5 MB) in My profile. We read your skills and details into your profile, so check them before applying. Clear headings such as Education and Work experience help.';
+  else if (/popia|privacy|my data|delete/.test(q)) r = 'Your consent is recorded with a version and timestamp. In My profile you can download your data or delete your account at any time.';
+  else if (/contact|phone|email|address|talk/.test(q)) r = 'Email info@mbono.co.za or call +27 (0)41 880 0086. We are at 19 Oakworth Road, Harbour View Building, South End, Gqeberha, 6001.';
+  else { const w = q.split(/\W+/).filter(x => x.length > 3), hits = open.filter(j => w.some(x => `${j.title} ${j.loc} ${j.sector} ${j.skills.join(' ')}`.toLowerCase().includes(x)));
+    r = hits.length ? 'Matching vacancies: ' + hits.slice(0, 4).map(j => `${j.title} (${j.loc}, ${j.type})`).join('; ') + '. Open Find jobs to apply.' : `We have ${open.length} open vacancies. Ask about a job title, skill or place, your application status, CV tips or POPIA.`; }
+  res.json({ reply: r });
 });
 
 app.use((err, req, res, next) => res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'File is too large (max 5 MB)' : err.message }));
